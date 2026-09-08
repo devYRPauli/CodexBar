@@ -12,6 +12,7 @@ import sys
 import tempfile
 import threading
 import time
+import types
 import unittest
 from unittest.mock import Mock, patch
 
@@ -1499,6 +1500,27 @@ int main(int argc, char **argv) {
                     except subprocess.TimeoutExpired:
                         process.kill()
                         process.wait(timeout=2)
+
+
+class ContainmentSupportTests(unittest.TestCase):
+    def test_partial_capabilities_name_only_the_missing_ones(self):
+        partial = types.SimpleNamespace(waitid=None, P_PID=0, WEXITED=0)
+        error = runner.containment_support_error(partial)
+        self.assertIsNotNone(error)
+        self.assertIn("WNOHANG", error)
+        self.assertIn("WNOWAIT", error)
+        self.assertNotIn("P_PID", error)
+        self.assertIn(sys.executable, error)
+
+    def test_complete_capabilities_report_no_error(self):
+        complete = types.SimpleNamespace(**{name: 0 for name in runner.CONTAINMENT_CAPABILITIES})
+        self.assertIsNone(runner.containment_support_error(complete))
+
+    def test_run_command_rejects_an_interpreter_without_waitid(self):
+        with patch.object(runner, "containment_support_error", return_value="no waitid here"):
+            with self.assertRaises(RuntimeError) as raised:
+                runner.run_command(["/bin/echo", "unreachable"])
+        self.assertEqual(str(raised.exception), "no waitid here")
 
 
 if __name__ == "__main__":

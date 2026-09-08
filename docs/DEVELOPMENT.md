@@ -142,6 +142,10 @@ not establish the cause of a position that changes again after launch; that requ
 make test
 ```
 
+`make test` and `make check` require a `python3` that provides `os.waitid` with `WNOWAIT`. Some macOS Python
+builds, including Apple's `/usr/bin/python3`, do not provide it. Both commands then stop before the build and
+name the interpreter path, its version and the missing attributes.
+
 Suite commands retain the default 180-second deadline, including SwiftPM startup and discovery.
 The runner reports elapsed time and owned PIDs every 30 seconds even when test output is buffered.
 It tracks process birth identities and descendants, including helpers that create separate process
