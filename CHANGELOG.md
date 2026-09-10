@@ -7,6 +7,7 @@
 
 ### Fixed
 - Website: keep Arabic and Persian hero copy clear of the illustration, preserve natural text direction, and avoid an oversized tablet popover during its reveal (#3514, fixes #3511). Thanks @devYRPauli!
+- Codex accounts: replace a misleading automatic CLI-retry promise with account-specific reauthentication guidance when native credentials need renewal (related to #3523). Thanks @zhulijin1991!
 - Menus: refresh cached status menus when macOS appearance changes, including previously opened submenus, so the first opening matches Light/Dark and accessibility appearances (#3526). Thanks @emanuelst!
 
 ## 0.58.0 — 2026-09-09
